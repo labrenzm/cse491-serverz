@@ -19,6 +19,6 @@ while True:
     c, (client_host, client_port) = s.accept()
     print c.recv(1000)
     print 'Got connection from', client_host, client_port
-    c.send('HTTP/1.0 200 OK\nDate: ' + time.asctime(time.gmtime()) + '\nContent-Type: text/html\n\n<html>\n<body>\n<h1>Hello, world</h1> this is Justin\'s web server\n</body>\n</html>\n')
+    c.send('HTTP/1.0 200 OK\nDate: ' + time.asctime(time.gmtime()) + '\nContent-Type: text/html\n\n<html>\n<body>\n<h1>Hello, world</h1> this is rushjust web server\n</body>\n</html>\n')
     c.close()
  
