@@ -1,3 +1,8 @@
 2014-01-07  Titus Brown  <t@Titus-MacBook-Air-2.local>
 
  * Initialized repository, created server.py and README.
+
+
+  At first I had the entire html code inside the "send" but I've modified it since so that there
+is a seperate 'message' variable that contains the html code and then I just send the 'message' variable. 
+I think it looks much neater this way. 
