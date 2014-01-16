@@ -2,7 +2,8 @@
 
  * Initialized repository, created server.py and README.
 
-
+# @comment I followed his example for the change log, with the *.
+#          Not sure if it is a big deal, but it looks nice to keep with consistency
   At first I had the entire html code inside the "send" but I've modified it since so that there
 is a seperate 'message' variable that contains the html code and then I just send the 'message' variable. 
 I think it looks much neater this way. 
