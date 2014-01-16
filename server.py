@@ -13,7 +13,8 @@ print 'The Web server URL for this would be http://%s:%d/' % (host, port)
 
 s.listen(5)                 # Now wait for client connection.
 
-
+# @comment I like how you assign the whole message in a variable.
+#          it keeps it clean and looks nice. 
 message = """
 
 HTTP/1.0 200 OK
@@ -35,3 +36,5 @@ while True:
     print 'Got connection from', client_host, client_port
     c.send(message)
     c.close()
+
+# @comment Everything worked fine for me.  
