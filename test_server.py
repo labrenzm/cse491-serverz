@@ -71,4 +71,12 @@ def test_handle_connection_image_page():
 
 def test_post():
     conn = FakeConnection("POST / HTTP/1.1\r\n\r\n")
-    expected_return = 'Hello World'
+    expected_return = 'HTTP/1.0 200 OK\r\n' + \
+                      'Content-type: text/html\r\n\r\n' + \
+                      'Hello World!'
+
+    server.handle_connection(conn)
+
+    print conn.sent
+    print expected_return
+    assert conn.sent == expected_return
