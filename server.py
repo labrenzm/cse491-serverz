@@ -46,20 +46,6 @@ def handle_connection(conn):
     
     conn.close()
 
-
-
-
-
-
-
-    # @comment add the \r\n for new lines
-    #conn.send('HTTP/1.0 200 OK\r\n')
-    #conn.send('Content-type: text/html\r\n\r\n')
-    #conn.send('<h1>Hello, world.</h1>')
-    #conn.send('This is labrenzm\'s Web server.')
-    conn.close()
-
-
 def main():
     s = socket.socket()         # Create a socket object
     host = socket.getfqdn() # Get local machine name
@@ -84,7 +70,8 @@ if __name__ == "__main__":
     main()
 
 
-
+# @CTB suggest removing -- you can get all of this from git history, if
+# needed.
 # Old Code, corrected is above.
 # c.send('Thank you for connecting')
 # c.send("""\nHTTP/1.0 200 OK
