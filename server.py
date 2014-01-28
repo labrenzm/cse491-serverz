@@ -27,8 +27,15 @@ def check_path(conn, path):
     elif path == '/image':
         conn.send('HTTP/1.0 200 OK\r\n')
         conn.send('Content-type: text/html\r\n\r\n')
-        conn.send('<h1>You made it to the Images Page!</h1>\n') 
-
+        conn.send('<h1>You made it to the Images Page!</h1>\n')
+    elif path == '/form':
+        conn.send('HTTP/1.0 200 OK\r\n')
+        conn.send('Content-type: text/html\r\n\r\n')
+        conn.send("<form action='/submit' method='GET'>")
+        conn.send("<input type='text' name='firstname'>")
+        conn.send("<input type='text' name='lastname'>") 
+        conn.send("<button type='submit'>Submit</button>")
+        conn.send('</form>')
 
 
 
