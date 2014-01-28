@@ -40,6 +40,8 @@ def handle_connection(conn):
         path = url.split('\r\n')[0].split(' ')[1]
         check_path(conn, path)
     if check_post == 'POST':
+        conn.send('HTTP/1.0 200 OK\r\n')
+        conn.send('Content-type: text/html\r\n\r\n')
         conn.send('Hello World!')
     
     conn.close()
