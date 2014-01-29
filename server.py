@@ -2,54 +2,88 @@
 import random
 import socket
 import time
+from urlparse import urlparse, parse_qs
 
+def index(conn, path, variables):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n\r\n')
+    conn.send('<h1>Hello, world.</h1>\n')
+    conn.send("This is labrenzm's Web server\r\n\r\n")
+    conn.send("<a href='/content'>Content</a><br />\n")
+    conn.send("<a href='/file'>Files</a><br />\n")
+    conn.send("<a href='/image'>Images</a><br />")   
 
-def check_path(conn, path):
+def content(conn, path, variables):
+    conn.send('HTTP/1.0 200 OK\r\n')
+    conn.send('Content-type: text/html\r\n\r\n')
+    conn.send('<h1>You made it to the Content Page!</h1>\n')
+
+def file(conn, path, variables):
+     conn.send('HTTP/1.0 200 OK\r\n')
+     conn.send('Content-type: text/html\r\n\r\n')
+     conn.send('<h1>You made it to the Files Page!</h1>\n')
+
+def image(conn, path, variables):
+     conn.send('HTTP/1.0 200 OK\r\n')
+     conn.send('Content-type: text/html\r\n\r\n')
+     conn.send('<h1>You made it to the Images Page!</h1>\n')
+
+def form(conn, path, variables):
+      conn.send('HTTP/1.0 200 OK\r\n')
+      conn.send('Content-type: text/html\r\n\r\n')
+      conn.send("<form action='/submit' method='GET'>")
+      conn.send("<input type='text' name='firstname'>")
+      conn.send("<input type='text' name='lastname'>") 
+      conn.send("<button type='submit'>Submit</button>")
+      conn.send('</form>')
+
+def submit(conn, path, variables):
+      conn.send('HTTP/1.0 200 OK\r\n')
+      conn.send('Content-type: text/html\r\n\r\n')
+      conn.send("Hello Mr. %s %s" % (variables.get('firstname')[0], \
+          variables.get('lastname')[0]))
+
+def check_path(conn, path, variables):
     if path == '/':
-        conn.send('HTTP/1.0 200 OK\r\n')
-        conn.send('Content-type: text/html\r\n\r\n')
-        conn.send('<h1>Hello, world.</h1>\n')
-        conn.send("This is labrenzm's Web server\r\n\r\n")
-        conn.send("<a href='/content'>Content</a><br />\n")
-        conn.send("<a href='/file'>Files</a><br />\n")
-        conn.send("<a href='/image'>Images</a><br />")
+        index(conn, path, variables) 
          
     elif path == '/content':
-        conn.send('HTTP/1.0 200 OK\r\n')
-        conn.send('Content-type: text/html\r\n\r\n')
-        conn.send('<h1>You made it to the Content Page!</h1>\n')
+        content(conn, path, variables) 
 
     elif path == '/file':
-        conn.send('HTTP/1.0 200 OK\r\n')
-        conn.send('Content-type: text/html\r\n\r\n')
-        conn.send('<h1>You made it to the Files Page!</h1>\n')
-
+        file(conn, path, variables)
+       
     elif path == '/image':
-        conn.send('HTTP/1.0 200 OK\r\n')
-        conn.send('Content-type: text/html\r\n\r\n')
-        conn.send('<h1>You made it to the Images Page!</h1>\n')
+        image(conn, path, variables)
+       
     elif path == '/form':
-        conn.send('HTTP/1.0 200 OK\r\n')
-        conn.send('Content-type: text/html\r\n\r\n')
-        conn.send("<form action='/submit' method='GET'>")
-        conn.send("<input type='text' name='firstname'>")
-        conn.send("<input type='text' name='lastname'>") 
-        conn.send("<button type='submit'>Submit</button>")
-        conn.send('</form>')
+        form(conn, path, variables)
+       
+    elif path == '/submit':
+        submit(conn, path, variables)
 
 
 
 def handle_connection(conn):
-    url = conn.recv(1000)  
-    check_post = url.split('\r\n')[0].split(' ')[0]
-
-    if check_post == 'GET':
-        path = url.split('\r\n')[0].split(' ')[1]
-        check_path(conn, path)
+    url = conn.recv(1000).splitlines()  
+    check_post = url[0].split(' ')[0]
+    request = urlparse(url[0].split(' ')[1])
+    path = request[2] 
+    if check_post == 'GET': 
+        variables = parse_qs(request[4])
+        check_path(conn, path, variables)
     if check_post == 'POST':
-        conn.send('HTTP/1.0 200 OK\r\n')
-        conn.send('Content-type: text/html\r\n\r\n')
-        conn.send('Hello World!')
+        if path == '/submit':
+            post_variables = conn.recv(1000).split('&')
+            firstname = post_variables[0].split('=')[1]
+            lastname = post_variables[1].split('=')[1]
+            conn.send('HTTP/1.0 200 OK\r\n')
+            conn.send('Content-type: application/x-www-form-urlencoded\r\n\r\n')
+            conn.send("Hello %s %s" % (firstname, lastname))
+        else:
+            conn.send('HTTP/1.0 200 OK\r\n')
+            conn.send('Content-type: text/html\r\n\r\n')
+            conn.send('Hello World!')
     
     conn.close()
 
@@ -77,20 +111,3 @@ if __name__ == "__main__":
     main()
 
 
-# @CTB suggest removing -- you can get all of this from git history, if
-# needed.
-# Old Code, corrected is above.
-# c.send('Thank you for connecting')
-# c.send("""\nHTTP/1.0 200 OK
- 
-#  Content-Type: text/html
-
-#  <html>
-#  <head>
-#  <body>
-#  <h1>Hello, World!</h1>
-#  this is labrenzm's web server!
-#  </body>
-#  </html>""")
-  
-#    c.send("\ngood bye.")

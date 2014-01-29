@@ -80,3 +80,22 @@ def test_post():
     print conn.sent
     print expected_return
     assert conn.sent == expected_return
+
+def test_form():
+    conn = FakeConnection("GET /submit?firstname=Matt&lastname=LaBrenz.")
+    expected_return = 'HTTP/1.0 200 OK\r\n' + \
+                      'Content-type: text/html\r\n\r\n' + \
+                      "Hello Mr. Matt LaBrenz."
+    server.handle_connection(conn)
+    assert conn.sent == expected_return, '\nExpected: %s \nGot: %s' % \
+        (repr(expected_return),repr(conn.sent),)
+
+#Test for the form when using post
+#def test_post_form():
+#    conn = FakeConnection("POST /submit HTTP/1.0\r\n\r\n")
+#    expected_return = 'HTTP/1.0 200 OK\r\n' + \
+#                      'Content-Type: application/x-www-form-urlencoded\r\n\r\n' + \
+#                      "Hello Mr. Matt LaBrenz."
+#    server.handle_connection(conn)
+#    assert conn.sent == expected_return, '\nExpected: %s \nGot: %s' % \
+#        (repr(expected_return),repr(conn.sent),)
