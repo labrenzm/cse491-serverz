@@ -2,84 +2,87 @@
 import random
 import socket
 import time
+import urlparse
+import cgi
+import jinja2
+from StringIO import StringIO
 from urlparse import urlparse, parse_qs
 
-def index(conn, path, variables):
-    conn.send('HTTP/1.0 200 OK\r\n')
-    conn.send('Content-type: text/html\r\n\r\n')
-    conn.send('<h1>Hello, world.</h1>\n')
-    conn.send("This is labrenzm's Web server\r\n\r\n")
-    conn.send("<a href='/content'>Content</a><br />\n")
-    conn.send("<a href='/file'>Files</a><br />\n")
-    conn.send("<a href='/image'>Images</a><br />")   
-
-def content(conn, path, variables):
-    conn.send('HTTP/1.0 200 OK\r\n')
-    conn.send('Content-type: text/html\r\n\r\n')
-    conn.send('<h1>You made it to the Content Page!</h1>\n')
-
-def file(conn, path, variables):
-     conn.send('HTTP/1.0 200 OK\r\n')
-     conn.send('Content-type: text/html\r\n\r\n')
-     conn.send('<h1>You made it to the Files Page!</h1>\n')
-
-def image(conn, path, variables):
-     conn.send('HTTP/1.0 200 OK\r\n')
-     conn.send('Content-type: text/html\r\n\r\n')
-     conn.send('<h1>You made it to the Images Page!</h1>\n')
-
-def form(conn, path, variables):
-      conn.send('HTTP/1.0 200 OK\r\n')
-      conn.send('Content-type: text/html\r\n\r\n')
-      conn.send("<form action='/submit' method='GET'>")
-      conn.send("<input type='text' name='firstname'>")
-      conn.send("<input type='text' name='lastname'>") 
-      conn.send("<button type='submit'>Submit</button>")
-      conn.send('</form>')
-
-def submit(conn, path, variables):
-      conn.send('HTTP/1.0 200 OK\r\n')
-      conn.send('Content-type: text/html\r\n\r\n')
-      conn.send("Hello Mr. %s %s" % (variables.get('firstname')[0], \
-          variables.get('lastname')[0]))
-
-def check_path(conn, path, variables):
-    if path == '/':
-        index(conn, path, variables) 
-         
-    elif path == '/content':
-        content(conn, path, variables) 
-
-    elif path == '/file':
-        file(conn, path, variables)
-       
-    elif path == '/image':
-        image(conn, path, variables)
-       
-    elif path == '/form':
-        form(conn, path, variables)
-       
-    elif path == '/submit':
-        submit(conn, path, variables)
 
 
+def handle_connection(conn): 
+    url = conn.recv(1)
+    headers = {}
+    while url[-4:] != '\r\n\r\n':
+        url += conn.recv(1)
+    
+    request, data = url.split('\r\n', 1)
+    split_url = url.split()
+    check_post = split_url[0]
+    url_data = urlparse(split_url[1])
+    path = url_data[2]
+    
+    for line in data.split('\r\n')[:-2]:
+        k, v = line.split(': ', 1)
+        headers[k.lower()] = v
+    
 
-def handle_connection(conn):
-    url = conn.recv(1000).splitlines()  
-    check_post = url[0].split(' ')[0]
-    request = urlparse(url[0].split(' ')[1])
-    path = request[2] 
+    
+    loader = jinja2.FileSystemLoader('./templates')
+    env = jinja2.Environment(loader=loader)
+    first_content = 'HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n'
+    
+    
     if check_post == 'GET': 
-        variables = parse_qs(request[4])
-        check_path(conn, path, variables)
+        if path == '/':
+            conn.send(env.get_template('index.html').render())
+         
+        elif path == '/content':
+	    conn.send(env.get_template('content.html').render())
+
+        elif path == '/file':
+            conn.send(env.get_template('file.html').render())
+       
+        elif path == '/image':
+            conn.send(env.get_template('image.html').render())
+       
+        elif path == '/form':
+            conn.send(env.get_template('form.html').render())
+       
+        elif path == '/submit':
+	    GET_form_data = parse_qs(url_data[4])
+            #submit(conn, GET_form_data)
+            first_name = ''.join(GET_form_data["firstname"])
+            last_name = ''.join(GET_form_data["lastname"])
+            vars = {'firstname':first_name, 'lastname':last_name}
+            conn.send(env.get_template('submit.html').render(vars))
+        else:
+	   conn.send(env.get_template('404.html').render())
+                
+    #initializing content to be empty
+    content = ''
     if check_post == 'POST':
+      
+        url_data_split = url.split('\r\n')
+        #for i in range(1,len(url_data_split) - 2):
+            #temp_header = url_data_split[i].split(': ', 1) 
+            #headers[temp_header[0].lower()] = temp_header[1]
+            #print temp_header
+            
+        while len(content) < int(headers['content-length']):
+            content += conn.recv(1)
+            
+        #print content
+            
+        #Putting the POST request into an StringIO objct, fp
+        fs = cgi.FieldStorage(fp=StringIO(content), headers=headers, environ={'REQUEST_METHOD' : 'POST'})
+        print headers
         if path == '/submit':
-            post_variables = conn.recv(1000).split('&')
-            firstname = post_variables[0].split('=')[1]
-            lastname = post_variables[1].split('=')[1]
             conn.send('HTTP/1.0 200 OK\r\n')
-            conn.send('Content-type: application/x-www-form-urlencoded\r\n\r\n')
-            conn.send("Hello %s %s" % (firstname, lastname))
+            conn.send('Content-Type: text/html\r\n\r\n')
+            first_name = headers['firstname'].value
+            last_name = ''.join(headers["lastname"].value)
+            conn.send("Hello Mr. {first} {last}.".format(first=first_name, last=last_name))
         else:
             conn.send('HTTP/1.0 200 OK\r\n')
             conn.send('Content-type: text/html\r\n\r\n')
