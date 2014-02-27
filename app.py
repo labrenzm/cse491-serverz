@@ -22,6 +22,8 @@ def file_return(path_info):
     
     
 def app(environ, start_response):
+  
+
     # The dict of pages we know how to get to
     response = {
                 '/' : 'index.html', \
