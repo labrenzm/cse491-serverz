@@ -1,86 +1,114 @@
+
 #!/usr/bin/env python
-# encoding: utf-8
-
-import jinja2
-from urlparse import parse_qs
+import socket
+import urlparse
 import cgi
-
-
-def file_return(path_info):
-    if path_info == '/image':
-        data = open('business_baby.jpg', 'rb')
-        return_file = data.read()
-        data.close()
-        return return_file
-    else:
-        data = open('test_file.txt')
-        return_file = data.read()
-        data.close()
-        return return_file
-    
-    
-    
-    
-def app(environ, start_response):
-  
-
-    # The dict of pages we know how to get to
-    response = {
-                '/' : 'index.html', \
-                '/content' : 'content.html', \
-                '/file' : 'file.html', \
-                '/image' : 'image.html', \
-                '/form' : 'form.html', \
-                '/submit' : 'submit.html', \
-               }
-
-    # Basic connection information and set up templates
-    loader = jinja2.FileSystemLoader('./templates')
-    env = jinja2.Environment(loader=loader)
-    response_headers = [('Content-type', 'text/html')]
-
-    # Check if we got a path to an existing page
-    if environ['PATH_INFO'] in response:
-        status = '200 OK'
-        template = env.get_template(response[environ['PATH_INFO']])	    
-	    
-    else:
-        status = '404 Not Found'
-        template = env.get_template('404NotFound.html')
-
-    # Set up template arguments
-    x = parse_qs(environ['QUERY_STRING']).iteritems()
-    args = {k : v[0] for k,v in x}
-    args['path'] = environ['PATH_INFO']
-
-    # Grab POST args if there are any
-    if environ['REQUEST_METHOD'] == 'POST':
-        headers = {k[5:].lower().replace('_','-') : v \
-                    for k,v in environ.iteritems() if(k.startswith('HTTP'))}
-        headers['content-type'] = environ['CONTENT_TYPE']
-        headers['content-length'] = environ['CONTENT_LENGTH']
-        fs = cgi.FieldStorage(fp=environ['wsgi.input'], \
-                                headers=headers, environ=environ)
-        args.update({x : fs[x].value for x in fs.keys()})
-
-    args = {unicode(k, "utf-8") : unicode(v, "utf-8") for k,v in args.iteritems()}
-    
-    if environ['PATH_INFO'] == '/image':
-        response_headers = [('Content-type', 'image/jpeg')]
-        start_response(status, response_headers)
-        return file_return(environ['PATH_INFO'])
-      
-    elif environ['PATH_INFO'] == '/file':
-        response_headers = [('Content-type', 'text/plain')]
-        start_response(status, response_headers)
-        return file_return(environ['PATH_INFO'])
-      
-    else:
-        print args
-
-        # Return the page
-        start_response(status, response_headers)
-        return [bytes(template.render(args))]
+import StringIO
+import jinja2
 
 def make_app():
-    return app
+    return simple_app
+
+def simple_app(environ, start_response):
+    return handle_request(environ, start_response)
+
+def handle_request(environ, start_response):
+    method = environ['REQUEST_METHOD']
+    path = environ['PATH_INFO']
+
+    status = '200 OK'
+    headers = [('Content-type','text/html')]
+    encode = True
+
+    # Sets up jinja2 to help with html templates.
+    loader = jinja2.FileSystemLoader('./templates')
+    jenv = jinja2.Environment(loader=loader)
+
+    # Creates the appropriate message.
+    if method == 'POST':
+        if path == '/submit-post-app' or path == '/submit-post-multi':
+            message = create_submit_post(environ, jenv)
+        else:
+            message = create_post(jenv)
+    else:
+        if path == '/':
+            message = create_default(jenv)
+        elif path == '/content':
+            message = create_content(jenv)
+        elif path == '/file':
+            encode = False
+            headers = [('Content-type', 'text/plain')]
+            message = create_file()
+        elif path == '/image':
+            encode = False
+            headers = [('Content-type', 'image/jpeg')]
+            message = create_image()
+        elif path == '/form-get':
+            message = create_form_get(jenv)
+        elif path == '/form-post-app':
+            message = create_form_app(jenv)
+        elif path == '/form-post-multi':
+            message = create_form_multi(jenv)
+        elif path == '/submit-get':
+            message = create_submit(environ, jenv)
+        else:
+            status = '404 Not Found'
+            message = create_404_error(jenv)
+
+    start_response(status, headers) # Starts response by sending status/headers.
+    # Returns rest of response.
+    if(encode):
+        return [message.encode('latin-1', 'replace')] # Encodes properly.
+    else:
+        return [message] # Don't encode for files though.
+
+def create_default(jenv):
+    return jenv.get_template('Index.html').render()
+
+def create_content(jenv):
+    return jenv.get_template('Content.html').render()
+
+def create_file():
+    return get_file('test_file.txt')
+
+def create_image():
+    return get_file('business_baby.jpg')
+
+def create_post(jenv):
+    return jenv.get_template('PostDefault.html').render()
+
+def create_form_get(jenv):
+    return jenv.get_template('FormGet.html').render()
+
+def create_form_app(jenv):
+    return jenv.get_template('FormPostApp.html').render()
+
+def create_form_multi(jenv):
+    return jenv.get_template('FormPostMulti.html').render()
+
+def create_submit(env, jenv):
+    # Parses through GET query component of URL.
+    queryDict = urlparse.parse_qs(env['QUERY_STRING'])
+
+    vars = dict(firstname=queryDict['firstname'][0],
+                lastname=queryDict['lastname'][0])
+
+    return jenv.get_template('Submit.html').render(vars)
+
+def create_submit_post(env, jenv):
+    # Holds submitted form data.
+    form = cgi.FieldStorage(fp=env['wsgi.input'], environ=env)
+
+    vars = dict(firstname=form.getvalue('firstname'),
+                lastname=form.getvalue('lastname'))
+
+    return jenv.get_template('Submit.html').render(vars)
+
+def create_404_error(jenv):
+    return jenv.get_template('404.html').render()
+
+def get_file(filename):
+    fp = open(filename, 'rb')
+    filedata = fp.read()
+    fp.close()
+    return filedata
