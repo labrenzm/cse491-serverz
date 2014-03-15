@@ -1,0 +1,10 @@
+{% extends "Base.html" %}
+
+{% block content %}
+<title>Form (Post-Multi)</title>
+<form action='/submit-post-multi' method='POST' enctype='multipart/form-data'>
+    First Name: <input type='text' name='firstname'><br>
+    Last Name: <input type='text' name='lastname'><br>
+    <input type='submit' value='Submit'>
+</form>
+{% endblock %}

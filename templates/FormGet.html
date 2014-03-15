@@ -1,0 +1,10 @@
+{% extends "Base.html" %}
+
+{% block content %}
+<title>Form (Get)</title>
+<form action='/submit-get' method='GET'>
+    First Name: <input type='text' name='firstname'><br>
+    Last Name: <input type='text' name='lastname'><br>
+    <input type='submit' value='Submit'>
+</form>
+{% endblock %}

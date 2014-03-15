@@ -1,0 +1,10 @@
+{% extends "Base.html" %}
+
+{% block content %}
+<title>Form (Post-App)</title>
+<form action='/submit-post-app' method='POST' enctype='application/x-www-form-urlencoded'>
+    First Name: <input type='text' name='firstname'><br>
+    Last Name: <input type='text' name='lastname'><br>
+    <input type='submit' value='Submit'>
+</form>
+{% endblock %}
