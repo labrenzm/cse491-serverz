@@ -35,7 +35,7 @@ def test_handle_connection_default():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n\r\n' + \
                       '<html>\n    <body>\n        \n<title>Home</title>\n' + \
-                      '<h1>Welcome to john3209\'s Web Server!</h1>\n<a hre' + \
+                      '<h1>Welcome to labrenzm\'s Web Server!</h1>\n<a hre' + \
                       'f="/content">Content</a><br />\n<a href="/file">Fil' + \
                       'e</a><br />\n<a href="/image">Image</a><br />\n<a h' + \
                       'ref="/form-get">Form (Get)</a><br />\n<a href="/for' + \
@@ -53,7 +53,7 @@ def test_handle_connection_content():
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n\r\n' + \
                       '<html>\n    <body>\n        \n<title>Content</title' + \
-                      '>\n<h1>This is john3209\'s content!</h1>\n\n    </b' + \
+                      '>\n<h1>This is labrenzm\'s content!</h1>\n\n    </b' + \
                       'ody>\n</html>'
 
     server.handle_connection(conn, app)
@@ -147,12 +147,12 @@ def test_handle_connection_form_post_multi():
     assert conn.sent == expected_return, 'Got: %s' % (repr(conn.sent),)
 
 def test_handle_connection_submit_get():
-    conn = FakeConnection("GET /submit-get?firstname=Jeff&lastname=Johnson HTTP/1.0\r\n\r\n")
+    conn = FakeConnection("GET /submit-get?firstname=Matt&lastname=LaBrenz HTTP/1.0\r\n\r\n")
     app = make_app()
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n\r\n' + \
                       '<html>\n    <body>\n        \n<title>Hello!</title>' + \
-                      '\n<h1>Hello Mr. Jeff Johnson.</h1>\n\n    </body>\n' + \
+                      '\n<h1>Hello Mr. Matt LaBrenz.</h1>\n\n    </body>\n' + \
                       '</html>'
 
     server.handle_connection(conn, app)
@@ -163,14 +163,14 @@ def test_handle_connection_submit_post_app():
     fakeRequest = "POST /submit-post-app HTTP/1.0\r\n" + \
                   "Content-Type: application/x-www-form-urlencoded\r\n" + \
                   "Content-Length: 31\r\n\r\n" + \
-                  "firstname=Jeff&lastname=Johnson"
+                  "firstname=Matt&lastname=LaBrenz"
 
     conn = FakeConnection(fakeRequest)
     app = make_app()
     expected_return = 'HTTP/1.0 200 OK\r\n' + \
                       'Content-type: text/html\r\n\r\n' + \
                       '<html>\n    <body>\n        \n<title>Hello!</title>' + \
-                      '\n<h1>Hello Mr. Jeff Johnson.</h1>\n\n    </body>\n' + \
+                      '\n<h1>Hello Mr. Matt LaBrenz.</h1>\n\n    </body>\n' + \
                       '</html>'
 
     server.handle_connection(conn, app)

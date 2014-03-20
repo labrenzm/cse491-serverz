@@ -18,3 +18,7 @@ Updated fo HW5
 
 2014-02-26 Matt LaBrenz
  * Updated for hw7
+
+2014-3-19 Matt LaBrenz
+ * Updated for hw8. Added twill tess and command line arguments
+ Project choice was adding support for JPEG and TIF in imageapp.  

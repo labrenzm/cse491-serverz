@@ -6,25 +6,51 @@ import urlparse
 import StringIO
 import quixote
 import imageapp
+import argparse
 
 from app import make_app
 # from quixote.demo import create_publisher
 # from quixote.demo.mini_demo import create_publisher
-# from quixote.demo.altdemo import create_publisher
+from quixote.demo.altdemo import create_publisher
 # from wsgiref.validate import validator
 
 def main():
     s = socket.socket() # Create a socket object.
     host = socket.getfqdn() # Get local machine name.
-    port = random.randint(8000, 9999) # Assign random port.
-    s.bind((host, port)) # Bind to the port.
-
-    # imageapp.setup()
-    wsgi_app = make_app() # Creates WSGI app.
+    
+    #creating parser for arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-A", choices=['image', 'altdemo', 'myapp'],
+                       help='Choose which app to run')
+    parser.add_argument("-p", type=int, help="Choose a port to run on.")
+    args = parser.parse_args()
+    
+    #Checking to see if a port was specified
+    if args.p == None: 
+        port = random.randint(8000, 9999) # Assign random port.
+        s.bind((host, port)) # Bind to the port.
+    else:
+        port = args.p
+        s.bind((host, port))
+    
+    #Looking to see which app to run
+    if args.A == 'myapp':
+        wsgi_app = make_app() # Creates WSGI app.
+    elif args.A == "image":
+        imageapp.setup()
+        p = imageapp.create_publisher()
+        wsgi_app = quixote.get_wsgi_app()
+    elif args.A == "altdemo":
+        p = create_publisher()
+        wsgi_app = quixote.get_wsgi_app()
+    
+    #If no argument then make my_app default
+    else:
+        wsgi_app = make_app();
+        
+        
     # validate_app = validator(wsgi_app)
-    # p = create_publisher()
-    # p = imageapp.create_publisher()
-    # wsgi_app = quixote.get_wsgi_app()
+
 
     print 'Starting server on', host, port
     print 'The Web server URL for this would be http://%s:%d/' % (host, port)

@@ -1,0 +1,26 @@
+go ./content
+code 200
+
+go ./file
+code 200
+
+go ./image
+code 200
+
+go ./form-get
+formvalue 1 firstname matt
+formvalue 1 lastname labrenz
+submit
+code 200
+
+go ./form-post-app
+formvalue 1 firstname matt
+formvalue 1 lastname labrenz
+submit
+code 200
+
+go ./form-post-multi
+formvalue 1 firstname matt
+formvalue 1 lastname labrenz
+submit
+code 200
