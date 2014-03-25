@@ -6,6 +6,8 @@ import urlparse
 import StringIO
 import quixote
 import imageapp
+import quotes
+import chat
 import argparse
 
 from app import make_app
@@ -20,7 +22,7 @@ def main():
     
     #creating parser for arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-A", choices=['image', 'altdemo', 'myapp'],
+    parser.add_argument("-A", choices=['image', 'altdemo', 'myapp', 'quotes', 'chat'],
                        help='Choose which app to run')
     parser.add_argument("-p", type=int, help="Choose a port to run on.")
     args = parser.parse_args()
@@ -43,6 +45,11 @@ def main():
     elif args.A == "altdemo":
         p = create_publisher()
         wsgi_app = quixote.get_wsgi_app()
+    elif args.A == "quotes":
+        wsgi_app = quotes.setup()
+    elif args.A == "chat":
+        wsgi_app = chat.setup()
+
     
     #If no argument then make my_app default
     else:

@@ -22,3 +22,8 @@ Updated fo HW5
 2014-3-19 Matt LaBrenz
  * Updated for hw8. Added twill tess and command line arguments
  Project choice was adding support for JPEG and TIF in imageapp.  
+
+2014-3-24-14 Matt LaBrenz
+  *Updated for hw9.  Added ability to host chat and quote apps. 
+  For the projects, I wrote how to host imageapp on a cloud server.  
+  The instructions can be found in this directory in the cse491_project file. 
