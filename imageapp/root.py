@@ -17,10 +17,16 @@ class RootDirectory(Directory):
 
     @export(name='upload_receive')
     def upload_receive(self):
-        request = quixote.get_request()
-        print request.form.keys()
+      
 
+        
+        request = quixote.get_request()
+        print request
+	
         the_file = request.form['file']
+        #Gigabyte DOS pervention
+        #file_size =  the_file.get_size()
+
         filetype = the_file.orig_filename.split('.')[1]
         if (filetype == 'tif' or filetype == 'tiff'):
             filetype = 'tiff'
@@ -35,7 +41,7 @@ class RootDirectory(Directory):
 
         image.add_image(data, filetype)
 
-        return quixote.redirect('./')
+        return html.render('image.html')
 
     @export(name='image')
     def image(self):
