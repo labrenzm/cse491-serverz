@@ -26,4 +26,10 @@ Updated fo HW5
 2014-3-24-14 Matt LaBrenz
   *Updated for hw9.  Added ability to host chat and quote apps. 
   For the projects, I wrote how to host imageapp on a cloud server.  
-  The instructions can be found in this directory in the cse491_project file. 
+  The instructions can be found in this directory in the cse491_project file.
+  
+2014-4-2-14 Matt LaBrenz
+
+    *Added a domain name to the server that hosts image app.  It is located at labrenzm.net
+    *Added Javascript in upload.html to prevent files larger than 5MB from being uploaded (DOS prevention)
+    
