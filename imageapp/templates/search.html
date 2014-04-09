@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+Search for an image:
+<br>
+<select name="search_type" form="search_form">
+  <option value="name">Name</option>
+  <option value="description">Description</option>
+  <option value="either">Either</option>
+</select>
+<br>
+<form action="search_images" id="search_form">
+  Enter search string:<input type="text" name="search_string">
+  <input type="submit" value="Search">
+</form>
+<br>
+<strong>{{ no_result }}</strong>
+
+
+
+
+{% endblock %}

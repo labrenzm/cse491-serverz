@@ -8,8 +8,9 @@ import quixote
 import imageapp
 import quotes
 import chat
+import sqlite3
 import argparse
-
+import cookieapp
 from app import make_app
 # from quixote.demo import create_publisher
 # from quixote.demo.mini_demo import create_publisher
@@ -22,7 +23,7 @@ def main():
     
     #creating parser for arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-A", choices=['image', 'altdemo', 'myapp', 'quotes', 'chat'],
+    parser.add_argument("-A", choices=['image', 'altdemo', 'myapp', 'quotes', 'chat', 'cookie'],
                        help='Choose which app to run')
     parser.add_argument("-p", type=int, help="Choose a port to run on.")
     args = parser.parse_args()
@@ -39,9 +40,24 @@ def main():
     if args.A == 'myapp':
         wsgi_app = make_app() # Creates WSGI app.
     elif args.A == "image":
+        import quixote
+        import imageapp
+        from imageapp import create_publisher
+        import sqlite3
+        p = create_publisher()
         imageapp.setup()
-        p = imageapp.create_publisher()
         wsgi_app = quixote.get_wsgi_app()
+        db = sqlite3.connect('images.sqlite')
+        db.text_factory = bytes
+        c = db.cursor()
+        c.execute(
+                    'CREATE TABLE IF NOT EXISTS image_store \
+                    (i INTEGER PRIMARY KEY AUTOINCREMENT, image BLOB)'\
+                  );
+        img = open('imageapp/dice.png', 'rb').read()
+        c.execute("INSERT INTO image_store (image) VALUES(?)", (img,))
+        db.commit()
+        db.close()
     elif args.A == "altdemo":
         p = create_publisher()
         wsgi_app = quixote.get_wsgi_app()
@@ -49,6 +65,8 @@ def main():
         wsgi_app = quotes.setup()
     elif args.A == "chat":
         wsgi_app = chat.setup()
+    elif args.A == "cookie":
+        wsgi_app = cookieapp.wsgi_app
 
     
     #If no argument then make my_app default

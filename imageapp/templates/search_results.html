@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Search Results</h2>
+<div id="imageContainer">
+</div>
+<script type="text/javascript">
+    $.post("search_image_count",
+         function(count) { 
+            count = parseInt(count);
+            for (var i = count - 1; i >= 0; i--) {
+                $("#imageContainer").append("<div style='padding-top:10px'>" + 
+                    "<img width='200' src='search_image_raw?num=" + i + "' /></div>");
+            }
+         }
+     );
+ </script>
+
+
+
+
+
+
+{% endblock %}
