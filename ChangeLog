@@ -38,6 +38,28 @@ Updated fo HW5
   *Updated for Hw11.  Added sqlite image storage and the cookie app can be run.
   *Implemented project #5   Added a URL that provides a list of images, resized to thumbnails.
   *Implemented project #8   Commenting on images.
-  *Implemented Project #6.  User has option to specify a name and descript for their image.
+  *Implemented Project #6   User has option to specify a name and descript for their image.
                             This information will be shown on the image page.
   *Implemented Project #7   User can search uploaded images by Name, Description, or either. 
+
+2014-4-10-2014 Matt LaBrenz
+
+   * Implemented project #2  Basic imageapp functionality in flask.  It can be run in the flask_implementation
+     directory with python run.py. 
+     
+   * Also attended the candidate seminar talk by Philip Haller on Monday 3/31, and wrote a blog post.
+   
+   
+   Project 4    5pts
+   Project 14   5pts
+   Project 20   5pts
+   Project 11   5pts
+   Project 5    5pts
+   Project 6    5pts
+   Project 7    5pts
+   Project 8    5pts
+   Project 2    5pts
+   Talk & Blog  5pts
+   __________________
+                50pts.
+   
