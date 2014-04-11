@@ -59,6 +59,8 @@ def main():
         db.commit()
         db.close()
     elif args.A == "altdemo":
+        import quixote
+        from quixote.demo.altdemo import create_publisher 
         p = create_publisher()
         wsgi_app = quixote.get_wsgi_app()
     elif args.A == "quotes":

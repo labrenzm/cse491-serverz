@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+Here are all your images:
+flask image app
+<br />
+ 
+{% for i in range(num_of_imgs) %}
+  <img width='100px' src='image_raw/{{ i }}'/>
+  <br />
+{% endfor %}
+{% endblock %}
