@@ -21,7 +21,7 @@ Updated fo HW5
 
 2014-3-19 Matt LaBrenz
  * Updated for hw8. Added twill tess and command line arguments
- Project choice was adding support for JPEG and TIF in imageapp. (Project #4)
+ * Project choice was adding support for JPEG and TIF in imageapp. (Project #4)
 
 2014-3-24-14 Matt LaBrenz
   *Updated for hw9.  Added ability to host chat and quote apps. 
@@ -36,7 +36,8 @@ Updated fo HW5
 2014-4-8-14 Matt LaBrenz
   
   *Updated for Hw11.  Added sqlite image storage and the cookie app can be run.
-  *Implemented project #5
-  *Implemented project #8
-  *Implemented Project #6
-  *Implemented Project #7
+  *Implemented project #5   Added a URL that provides a list of images, resized to thumbnails.
+  *Implemented project #8   Commenting on images.
+  *Implemented Project #6.  User has option to specify a name and descript for their image.
+                            This information will be shown on the image page.
+  *Implemented Project #7   User can search uploaded images by Name, Description, or either. 
