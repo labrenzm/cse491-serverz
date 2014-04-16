@@ -4,7 +4,7 @@
 import os
 import sqlite3
 import cPickle
-
+import threading
 
 images = {}
 return_images = []
@@ -14,12 +14,17 @@ db = sqlite3.connect('images.sqlite')
 
 
 def add_image(data, filetype, name, description):
+    
+    lock = threading.Lock()
+
+    lock.acquire()
     if images:
         image_num = max(images.keys()) + 1
     else:
         image_num = 0
+    lock.release()
     db = sqlite3.connect('images.sqlite')
-
+    
     # configure to allow binary insertions
     db.text_factory = bytes
 

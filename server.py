@@ -8,6 +8,7 @@ import quixote
 import imageapp
 import quotes
 import chat
+import threading
 import sqlite3
 import argparse
 import cookieapp
@@ -89,8 +90,11 @@ def main():
         # Establish connection with client.
         c, (client_host, client_port) = s.accept()
         print 'Got connection from', client_host, client_port
-        handle_connection(c, wsgi_app)
-        # handle_connection(c, validate_app)
+        #handle_connection(c, wsgi_app)
+        #Multithreading
+        t = threading.Thread(target=handle_connection,
+                             args=(c, wsgi_app))
+        t.start()
     return
 
 def handle_connection(conn, wsgi_app):
