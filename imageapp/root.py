@@ -29,21 +29,24 @@ class RootDirectory(Directory):
         global image_name
         global image_description
         global metadata_string
+        global not_supported
         
         request = quixote.get_request()
         print request
 	
         the_file = request.form['file']
-
         filetype = the_file.orig_filename.split('.')[1]
-        if (filetype == 'tif' or filetype == 'tiff'):
+        print 'Filetype = ' + filetype
+        if filetype == 'tif' or filetype == 'tiff':
             filetype = 'tiff'
-        elif filetype == 'jpeg' or filetype == 'jpg':
+        if filetype == 'jpeg' or filetype == 'jpg':
             filetype = 'jpg'
-        else:
-            return
+        if the_file.orig_filename[-1:-3] == 'png':
+            filetype ='png'
+        if filetype not in 'tiftiffjpgjpegpng':
+            not_supported = "Error! Filetype not supported! Please try again."
+            return html.render("upload.html",globals())
         print 'received file of type: ' + filetype
-        print dir(the_file)
         print 'received file with name:', the_file.base_filename
         data = the_file.read(int(1e9))
 

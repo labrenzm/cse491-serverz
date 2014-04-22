@@ -45,7 +45,7 @@ def main():
         import imageapp
         from imageapp import create_publisher
         import sqlite3
-        p = create_publisher()
+        p = imageapp.create_publisher()
         imageapp.setup()
         wsgi_app = quixote.get_wsgi_app()
         db = sqlite3.connect('images.sqlite')

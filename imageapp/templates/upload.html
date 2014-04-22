@@ -13,9 +13,9 @@ Image Name: <input type="text" value="" name='image_name'>
 <br>
 Image Description: <input type="text" value="" name='description'>
 <br>
-<input type="button" value="Submit" id="i_submit" />
+<input type="submit" value="Submit" id="i_submit" />
 </form>
-
+<strong>{{ not_supported }}</strong>
 <script type='text/javascript' action='upload_receive'>
 $('#i_submit').click( function() {
     //check whether browser fully supports all File API
